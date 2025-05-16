@@ -13,10 +13,22 @@ mongoose.connect(process.env.DB_URL)
 
 // middleware
 app.use(express.json());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://web-advance-bc.vercel.app'
+];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://web-advance-bc.vercel.app/'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 
 // routes
 const bookRoutes = require('./src/books/book.route'); 
